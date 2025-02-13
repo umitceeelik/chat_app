@@ -74,7 +74,13 @@ class _RegisterPageState extends State<RegisterPage> {
                 },
               ),
               SizedBox(height: 20),
-              AuthPromt(textGrey: 'Already have an account? ', textBlue: 'Click here to login', onTap: () {Navigator.pushNamed(context, '/login');}),
+              AuthPromt(
+                textGrey: 'Already have an account? ',
+                textBlue: 'Click here to login',
+                onTap: () {
+                  Navigator.pushNamed(context, '/login');
+                }
+              ),
             ],
           ), 
         ),

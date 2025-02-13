@@ -1,11 +1,28 @@
 import 'dart:math';
 
 import 'package:chat_app/core/theme.dart';
+import 'package:chat_app/features/chat/presentation/pages/chat_page.dart';
+import 'package:chat_app/features/conversation/presentation/bloc/conversations_bloc.dart';
+import 'package:chat_app/features/conversation/presentation/bloc/conversations_event.dart';
+import 'package:chat_app/features/conversation/presentation/bloc/conversations_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class MessagePage extends StatelessWidget {
+class ConversationsPage extends StatefulWidget {
   
-  const MessagePage({Key? key}) : super(key: key);
+  const ConversationsPage({Key? key}) : super(key: key);
+
+  @override
+  State<ConversationsPage> createState() => _ConversationsPageState();
+}
+
+class _ConversationsPageState extends State<ConversationsPage> {
+
+  @override
+  void initState() {
+    super.initState();
+    BlocProvider.of<ConversationsBloc>(context).add(FetchConversations());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,14 +79,34 @@ class MessagePage extends StatelessWidget {
                   topRight: Radius.circular(50),
                 ),
               ),
-              child: ListView(
-                children: [
-                  _buildMessageTile("Umit C", "umitclk2001@gmail.com", '08:43'),
-                  _buildMessageTile("hahao C", "umitclk2001@gmail.com", '08:43'),
-                  _buildMessageTile("ahemt C", "umitclk2001@gmail.com", '08:43'),
-                  _buildMessageTile("elif C", "umitclk2001@gmail.com", '08:43'),
-                  _buildMessageTile("husny C", "umitclk2001@gmail.com", '08:43')
-                ],
+              child: BlocBuilder<ConversationsBloc, ConversationsState>(
+                builder: (context, state) {
+                  if(state is ConversationsLoading) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (state is ConversationsLoaded) {
+                    return ListView.builder(
+                      itemCount: state.conversations.length,
+                      itemBuilder: (context, index) {
+                        final conversation = state.conversations[index];
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) =>
+                              ChatPage(conversationId: conversation.id, mate: conversation.participantName)
+                            ));
+                          },
+                          child: _buildMessageTile(
+                            conversation.participantName,
+                            conversation.lastMessage,
+                            conversation.lastMessageTime.toString()
+                          ),
+                        );
+                      },
+                    );
+                  } else if(state is ConversationError) {
+                    return Center(child: Text(state.message));
+                  }
+                  return Center(child: Text('No conversations found'));                 
+                },
               ),
             ),
           )

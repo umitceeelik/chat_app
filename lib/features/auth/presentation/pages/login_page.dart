@@ -61,7 +61,7 @@ class _LoginPageState extends State<LoginPage> {
                 listener: (context, state) {
                   if (state is AuthSuccess) {
                     print('Login successful');
-                    Navigator.pushNamed(context, '/chatPage');
+                    Navigator.pushNamedAndRemoveUntil(context, '/conversationPage', (route) => false);
                   } else if (state is AuthFailure) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text(state.error))
