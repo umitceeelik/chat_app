@@ -24,6 +24,13 @@ class AppTheme {
     return ThemeData(
       primaryColor: Colors.white,
       scaffoldBackgroundColor: Color(0xFF1B202D),
+      appBarTheme: AppBarTheme(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        toolbarHeight: 70,
+        centerTitle: false,
+        iconTheme: IconThemeData(color: Colors.white),
+      ),
       textTheme: TextTheme(
         titleMedium: GoogleFonts.alegreyaSans(
           fontSize: FontSizes.medium,
@@ -45,7 +52,7 @@ class AppTheme {
           fontSize: FontSizes.standardUp,
           color: Colors.white,
         ),
-      )
+      ),
     );
   }
 }

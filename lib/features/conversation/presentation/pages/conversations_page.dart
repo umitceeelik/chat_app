@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:chat_app/core/theme.dart';
 import 'package:chat_app/features/chat/presentation/pages/chat_page.dart';
+import 'package:chat_app/features/contacts/presentation/pages/contacts_page.dart';
 import 'package:chat_app/features/conversation/presentation/bloc/conversations_bloc.dart';
 import 'package:chat_app/features/conversation/presentation/bloc/conversations_event.dart';
 import 'package:chat_app/features/conversation/presentation/bloc/conversations_state.dart';
@@ -32,10 +33,6 @@ class _ConversationsPageState extends State<ConversationsPage> {
           'Messages',
           style: Theme.of(context).textTheme.titleLarge,
         ),
-        centerTitle: false,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        toolbarHeight: 70,
         actions: [
           IconButton(
             onPressed: () {},
@@ -111,7 +108,14 @@ class _ConversationsPageState extends State<ConversationsPage> {
             ),
           )
         ],
-      )
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => ContactsPage()));
+        },
+        backgroundColor: DefaultColors.buttonColor,
+        child: const Icon(Icons.contacts, color: Colors.white),
+      ),
     );
   }
 
