@@ -1,4 +1,5 @@
 import 'package:chat_app/core/socket_service.dart';
+import 'package:chat_app/features/contacts/domain/usecases/fetch_recent_contacts_usecase.dart';
 import 'package:chat_app/features/conversation/domain/usecases/fetch_conversations_use_case.dart';
 import 'package:chat_app/features/conversation/presentation/bloc/conversations_event.dart';
 import 'package:chat_app/features/conversation/presentation/bloc/conversations_state.dart';

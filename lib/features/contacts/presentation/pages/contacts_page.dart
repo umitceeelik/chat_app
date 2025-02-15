@@ -36,7 +36,8 @@ class _ContactsPageState extends State<ContactsPage> {
               MaterialPageRoute(
                 builder: (context) => ChatPage(
                   conversationId: state.conversationId,
-                  mate: state.contactName,
+                  mate: state.contact.username,
+                  profileImage: state.contact.profileImage,
                 ),
               ),
             );
@@ -60,7 +61,7 @@ class _ContactsPageState extends State<ContactsPage> {
                     onTap: () {
                       // Navigator.pop(context, contact);
                       BlocProvider.of<ContactsBloc>(context).add(
-                        CheckOrCreateConversation(contactId: contact.id, contactName: contact.username)
+                        CheckOrCreateConversation(contactId: contact.id, contact: contact),
                       );
                       print("a");
                     },

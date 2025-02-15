@@ -9,8 +9,9 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 class ChatPage extends StatefulWidget {
   final String conversationId;
   final String mate;
+  final String profileImage;
 
-  const ChatPage({Key? key, required this.conversationId, required this.mate}) : super(key: key);
+  const ChatPage({Key? key, required this.conversationId, required this.mate, required this.profileImage}) : super(key: key);
 
   @override
   State<ChatPage> createState() => _ChatPageState();
@@ -20,6 +21,7 @@ class _ChatPageState extends State<ChatPage> {
   final TextEditingController _messageController = TextEditingController();
   final _storage = FlutterSecureStorage();
   String userId = '';
+  String botId = '00000000-0000-0000-0000-000000000000';
 
   @override
   void initState() {
@@ -58,7 +60,7 @@ class _ChatPageState extends State<ChatPage> {
         title: Row(
           children: [
             CircleAvatar(
-              backgroundImage: NetworkImage('https://gratisography.com/wp-content/uploads/2024/11/gratisography-augmented-reality-800x525.jpg'),
+              backgroundImage: NetworkImage(widget.profileImage),
             ),
             SizedBox(width: 10),
             Text(
@@ -88,9 +90,17 @@ class _ChatPageState extends State<ChatPage> {
                     itemBuilder: (context, index) {
                       final message = state.messages[index];
                       final isSentMessage = userId == message.senderId;
-                      return isSentMessage
-                          ? _buildSentMessage(context, message.content)
-                          : _buildReceivedMessage(context, message.content);
+                      final isDailyQuestion = message.senderId == botId;
+
+                      if(isSentMessage) {
+                        return _buildSentMessage(context, message.content);
+                      }
+                      else if(isDailyQuestion) {
+                        return _buildDailyQuestionMessage(context, message.content);
+                      }
+                      else {
+                        return _buildReceivedMessage(context, message.content);
+                      }                     
                     },
                   );
                 } else if (state is ChatErrorState) {
@@ -138,6 +148,24 @@ class _ChatPageState extends State<ChatPage> {
         child: Text(
           message,
           style: Theme.of(context).textTheme.bodyMedium,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDailyQuestionMessage(BuildContext context, String message) {
+    return Align(
+      alignment: Alignment.center,
+      child: Container(
+        margin: EdgeInsets.symmetric(vertical: 10),
+        padding: EdgeInsets.all(15),
+        decoration: BoxDecoration(
+          color: DefaultColors.dailyQuestionColor,
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: Text(
+            "🧠 Daily Question: $message",
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.white70),
         ),
       ),
     );

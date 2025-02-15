@@ -1,12 +1,12 @@
 import "package:chat_app/features/chat/domain/entities/message_entity.dart";
 import "package:chat_app/features/chat/domain/repositories/messages_repository.dart";
 
-class FetchMessagesUsecase {
-  final MessagesRepository messagesRepository;
+class FetchMessagesUseCase {
+  final MessagesRepository repository;
 
-  FetchMessagesUsecase({required this.messagesRepository});
+  FetchMessagesUseCase({required this.repository});
 
   Future<List<MessageEntity>> call(String conversationId) async {
-    return messagesRepository.fetchMessages(conversationId);
+    return repository.fetchMessages(conversationId);
   }
 }

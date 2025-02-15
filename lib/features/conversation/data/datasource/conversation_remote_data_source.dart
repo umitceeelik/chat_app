@@ -5,8 +5,10 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 class ConversationRemoteDataSource {
-  final String baseUrl = 'http://10.0.2.2:6000';
+  final String baseUrl;
   final _storage = FlutterSecureStorage();
+
+  ConversationRemoteDataSource({required this.baseUrl});
 
   Future<List<ConversationModel>> fetchConversations() async {
     String token = await _storage.read(key: 'token') ?? '';

@@ -1,3 +1,4 @@
+import 'package:chat_app/features/contacts/domain/entities/contact_entity.dart';
 import 'package:chat_app/features/conversation/domain/entities/conversation_entity.dart';
 
 abstract class ConversationsState {}

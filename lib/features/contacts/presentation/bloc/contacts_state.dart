@@ -22,7 +22,13 @@ class ContactAdded extends ContactsState {}
 
 class ConversationReady extends ContactsState {
   final String conversationId;
-  final String contactName;
+  final ContactEntity contact;
 
-  ConversationReady({required this.conversationId, required this.contactName});
+  ConversationReady({required this.conversationId, required this.contact});
+}
+
+class RecentContactsLoaded extends ContactsState {
+  final List<ContactEntity> recentContacts;
+
+  RecentContactsLoaded({required this.recentContacts});
 }

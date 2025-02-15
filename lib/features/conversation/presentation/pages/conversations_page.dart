@@ -1,7 +1,8 @@
-import 'dart:math';
-
 import 'package:chat_app/core/theme.dart';
 import 'package:chat_app/features/chat/presentation/pages/chat_page.dart';
+import 'package:chat_app/features/contacts/presentation/bloc/contacts_bloc.dart';
+import 'package:chat_app/features/contacts/presentation/bloc/contacts_event.dart';
+import 'package:chat_app/features/contacts/presentation/bloc/contacts_state.dart';
 import 'package:chat_app/features/contacts/presentation/pages/contacts_page.dart';
 import 'package:chat_app/features/conversation/presentation/bloc/conversations_bloc.dart';
 import 'package:chat_app/features/conversation/presentation/bloc/conversations_event.dart';
@@ -23,6 +24,7 @@ class _ConversationsPageState extends State<ConversationsPage> {
   void initState() {
     super.initState();
     BlocProvider.of<ConversationsBloc>(context).add(FetchConversations());
+    BlocProvider.of<ContactsBloc>(context).add(LoadRecentContacts());
   }
 
   @override
@@ -50,21 +52,27 @@ class _ConversationsPageState extends State<ConversationsPage> {
               style: Theme.of(context).textTheme.bodySmall,
             ),
           ),
-          Container(
-            height: 100,
-            padding: const EdgeInsets.all(5),
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: [
-                _buildRecentContact('1',context),
-                _buildRecentContact('2',context),
-                _buildRecentContact('3',context),
-                _buildRecentContact('4',context),
-                _buildRecentContact('TEST',context),
-                _buildRecentContact('TEST',context),
-                _buildRecentContact('5',context),
-              ],
-            ),
+          BlocBuilder<ContactsBloc, ContactsState>(
+            builder: (context, state) {
+              if(state is RecentContactsLoaded) {
+                return  Container(
+                  height: 100,
+                  padding: EdgeInsets.all(5),
+                  child: ListView.builder(
+                      itemCount: state.recentContacts.length,
+                      physics: NeverScrollableScrollPhysics(),
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, index) {
+                        final contact = state.recentContacts[index];
+                        return _buildRecentContact(contact.username, contact.profileImage, context);
+                      }
+                  ),
+                );
+              } else if (state is ContactsLoading) {
+                return Center(child: CircularProgressIndicator());
+              }
+              return Center(child: Text('No recent contacts found'));
+            }
           ),
           SizedBox(height: 10),
           Expanded(
@@ -88,11 +96,15 @@ class _ConversationsPageState extends State<ConversationsPage> {
                         return GestureDetector(
                           onTap: () {
                             Navigator.push(context, MaterialPageRoute(builder: (context) =>
-                              ChatPage(conversationId: conversation.id, mate: conversation.participantName)
+                              ChatPage(
+                                conversationId: conversation.id,
+                                mate: conversation.participantName,
+                                profileImage: conversation.participantImage)
                             ));
                           },
                           child: _buildMessageTile(
                             conversation.participantName,
+                            conversation.participantImage,
                             conversation.lastMessage,
                             conversation.lastMessageTime.toString()
                           ),
@@ -110,8 +122,15 @@ class _ConversationsPageState extends State<ConversationsPage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => ContactsPage()));
+        onPressed: () async{
+          final contactsBloc = BlocProvider.of<ContactsBloc>(context);
+          var res = await Navigator.push(
+            context, 
+            MaterialPageRoute(builder: (context) => ContactsPage())
+          );
+          if(res == null) {
+            contactsBloc.add(LoadRecentContacts());
+          }
         },
         backgroundColor: DefaultColors.buttonColor,
         child: const Icon(Icons.contacts, color: Colors.white),
@@ -119,12 +138,12 @@ class _ConversationsPageState extends State<ConversationsPage> {
     );
   }
 
-  Widget _buildMessageTile(String name, String message, String time) {
+  Widget _buildMessageTile(String name, String image, String message, String time) {
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       leading: CircleAvatar(
         radius: 30,
-        backgroundImage: NetworkImage('https://gratisography.com/wp-content/uploads/2024/11/gratisography-augmented-reality-800x525.jpg'),
+        backgroundImage: NetworkImage(image),
       ),
       title: Text(
         name,
@@ -142,14 +161,14 @@ class _ConversationsPageState extends State<ConversationsPage> {
     );
   }
 
-  Widget _buildRecentContact(String name, BuildContext context) {
+  Widget _buildRecentContact(String name, String image, BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Column(
         children: [
           CircleAvatar(
             radius: 30,
-            backgroundImage: NetworkImage('https://gratisography.com/wp-content/uploads/2024/11/gratisography-augmented-reality-800x525.jpg'),
+            backgroundImage: NetworkImage(image) ,
           ),
           const SizedBox(height: 5),
           Text(

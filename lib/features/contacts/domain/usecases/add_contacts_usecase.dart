@@ -1,11 +1,11 @@
 import 'package:chat_app/features/contacts/domain/repositories/contacts_repository.dart';
 
-class AddContactsUsecase {
-  final ContactsRepository contactsRepository;
+class AddContactsUseCase {
+  final ContactsRepository repository;
 
-  AddContactsUsecase({required this.contactsRepository});
+  AddContactsUseCase({required this.repository});
 
   Future<void> call({required String email}) async{
-    return await contactsRepository.addContact(email: email);
+    return await repository.addContact(email: email);
   }
 }
